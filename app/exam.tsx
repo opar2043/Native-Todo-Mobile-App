@@ -29,35 +29,43 @@ export default function exam() {
     }
     
   return (
-    <View className='max-w-lg  mx-auto flex gap-4'>
-        <Text className='font-bold text-xl mt-3'>Login Form</Text>
-        {/* start */}
-      <View>
-        <TextInput 
+    <View className="flex-1 bg-background px-5 justify-center">
+        <Text className="font-bold text-[32px] text-primaryText mb-8">Login Form</Text>
+        
+        {/* Email */}
+        <View className="bg-card border border-gray-100 rounded-[14px] mb-4 px-4 py-3 shadow-sm">
+          <Text className="text-secondaryText font-medium text-[13px] mb-1">Email</Text>
+          <TextInput 
+            placeholder="name@example.com"
+            placeholderTextColor="#6B6B6B"
+            className="flex-1 text-primaryText font-normal text-[15px] p-2"
+            value={emails}
+            onChangeText={(text) => setEmail(text)}
+          />
+        </View>
 
-         placeholder='Write Email ...'
-         className='p-2 bg-gray-400'
-         value={emails}
-         onChangeText={(text) => setEmail(text)}
-        />
-      </View>
-      {/* finished */}
-      <View>
-        <TextInput 
-         placeholder='Write Password ...'
-         className='p-2 mt-3 bg-gray-100'
-     
-         value={passwords}
-         onChangeText={setPassword}
-         secureTextEntry
-        />
-      </View>
-{    err &&  <View>
-        <Text className='text-red-500'>{err}</Text>
-      </View>}
-      <TouchableOpacity onPress={handleSubmit} className='bg-blue-700 p-3 mt-3 rounded-md text-white'>
-        <Text className='text-white'>Sign In</Text>
-      </TouchableOpacity>
+        {/* Password */}
+        <View className="bg-card border border-gray-100 rounded-[14px] mb-4 px-4 py-3 shadow-sm">
+          <Text className="text-secondaryText font-medium text-[13px] mb-1">Password</Text>
+          <TextInput 
+            placeholder="••••••••"
+            placeholderTextColor="#6B6B6B"
+            className="flex-1 text-primaryText font-normal text-[15px] p-2"
+            value={passwords}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+        </View>
+
+        {err && (
+          <View className="bg-[#FCE8E6] px-4 py-2 rounded-full mb-4 self-start">
+            <Text className="text-[#C5221F] font-bold text-[12px]">{err}</Text>
+          </View>
+        )}
+
+        <TouchableOpacity onPress={handleSubmit} className="bg-accent h-[48px] rounded-[14px] justify-center items-center shadow-md mt-4">
+          <Text className="text-white font-bold text-[15px]">Sign In</Text>
+        </TouchableOpacity>
     </View>
-  )
+  );
 }

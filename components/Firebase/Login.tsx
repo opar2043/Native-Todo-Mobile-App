@@ -22,7 +22,7 @@ const Login = () => {
     try {
       await handleLogin(email, password);
       Alert.alert("Success", "Logged In Successfully");
-      router.replace("/add-todo");
+      router.replace("/(tabs)");
     } catch (error) {
       Alert.alert("Login Failed", error.message);
     }
@@ -32,7 +32,7 @@ const Login = () => {
   const handleGoogle = async () => {
     try {
       await googleSignIn();
-      router.replace("/add-todo");
+      router.replace("/(tabs)");
     } catch (error) {
       Alert.alert("Sign In Failed", error.message);
     }
@@ -40,83 +40,83 @@ const Login = () => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center bg-white">
-        <ActivityIndicator size="large" color="#000" />
+      <View className="flex-1 justify-center items-center bg-background">
+        <ActivityIndicator size="large" color="#FF6B35" />
       </View>
     );
   }
 
   return (
-    <View className="flex-1 justify-center bg-white px-8">
+    <View className="flex-1 justify-center bg-background px-5">
       
-      <View className="items-center mb-12">
-        <View className="bg-indigo-600 w-20 h-20 rounded-md items-center justify-center shadow-lg shadow-indigo-600/20 mb-6">
-            <Ionicons name="layers" size={40} color="white" />
+      <View className="items-center mb-10">
+        <View className="bg-card w-20 h-20 rounded-[20px] items-center justify-center shadow-lg mb-6 border border-gray-100">
+            <Ionicons name="checkmark-done" size={40} color="#FF6B35" />
         </View>
-        <Text className="text-4xl font-bold text-slate-900 tracking-tighter">NATIVE<Text className="text-indigo-600">PRO</Text></Text>
-        <Text className="text-slate-400 font-bold uppercase tracking-[4px] text-[10px] mt-2">Executive Portal Access</Text>
+        <Text className="text-[32px] font-bold text-primaryText">Native Todo</Text>
+        <Text className="text-secondaryText font-medium text-[15px] mt-1">Organize your life seamlessly</Text>
       </View>
 
       {/* Email Input */}
-      <View className="bg-slate-50 border border-slate-100 rounded-md mb-4 px-4 py-2">
-        <Text className="text-indigo-600 font-extrabold text-[9px] uppercase tracking-widest mb-1">Identity Path</Text>
+      <View className="bg-card border border-gray-100 rounded-[14px] mb-4 px-4 py-3 shadow-sm">
+        <Text className="text-secondaryText font-medium text-[13px] mb-1">Email Address</Text>
         <View className="flex-row items-center">
-            <Ionicons name="mail-outline" size={18} color="#94A3B8" />
+            <Ionicons name="mail-outline" size={20} color="#6B6B6B" />
             <TextInput
-            placeholder="identity@domain.pro"
-            placeholderTextColor="#94A3B8"
+            placeholder="name@example.com"
+            placeholderTextColor="#6B6B6B"
             value={email}
             onChangeText={setEmail}
-            className="flex-1 p-2 text-slate-900 font-bold"
+            className="flex-1 p-2 text-primaryText font-normal text-[15px]"
             autoCapitalize="none"
             />
         </View>
       </View>
 
       {/* Password Input */}
-      <View className="bg-slate-50 border border-slate-100 rounded-md mb-8 px-4 py-2">
-        <Text className="text-indigo-600 font-extrabold text-[9px] uppercase tracking-widest mb-1">Security Key</Text>
+      <View className="bg-card border border-gray-100 rounded-[14px] mb-6 px-4 py-3 shadow-sm">
+        <Text className="text-secondaryText font-medium text-[13px] mb-1">Password</Text>
         <View className="flex-row items-center">
-            <Ionicons name="lock-closed-outline" size={18} color="#94A3B8" />
+            <Ionicons name="lock-closed-outline" size={20} color="#6B6B6B" />
             <TextInput
             placeholder="••••••••"
-            placeholderTextColor="#94A3B8"
+            placeholderTextColor="#6B6B6B"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
-            className="flex-1 p-2 text-slate-900 font-bold"
+            className="flex-1 p-2 text-primaryText font-normal text-[15px]"
             />
         </View>
       </View>
 
       {/* Login Button */}
       <TouchableOpacity
-        className="bg-indigo-600 p-5 rounded-md flex-row justify-center items-center shadow-md shadow-indigo-600/20"
+        className="bg-accent h-[48px] rounded-[14px] flex-row justify-center items-center shadow-md"
         onPress={handleEmailLogin}
       >
-        <Text className="text-white font-bold text-lg uppercase tracking-widest">Authorize Session</Text>
+        <Text className="text-white font-bold text-[15px]">Log In</Text>
       </TouchableOpacity>
 
       {/* Social Login Divider */}
-      <View className="flex-row items-center my-10">
-        <View className="flex-1 h-[1px] bg-slate-100" />
-        <Text className="mx-4 text-slate-400 font-extrabold text-[9px] uppercase tracking-widest">Third Party Auth</Text>
-        <View className="flex-1 h-[1px] bg-slate-100" />
+      <View className="flex-row items-center my-8">
+        <View className="flex-1 h-[1px] bg-gray-300" />
+        <Text className="mx-4 text-secondaryText font-medium text-[13px]">Or continue with</Text>
+        <View className="flex-1 h-[1px] bg-gray-300" />
       </View>
 
       {/* Google Login */}
       <TouchableOpacity
-        className="bg-white border border-slate-100 p-4 rounded-md flex-row justify-center items-center shadow-sm"
+        className="bg-card border-2 border-primaryText h-[48px] rounded-[14px] flex-row justify-center items-center shadow-sm"
         onPress={handleGoogleLogin}
       >
         <Ionicons name="logo-google" size={20} color="#E11D48" />
-        <Text className="text-slate-700 font-bold ml-3 uppercase text-[10px] tracking-widest">Access with Google</Text>
+        <Text className="text-primaryText font-bold ml-2 text-[15px]">Google</Text>
       </TouchableOpacity>
 
       {/* Register Link */}
-      <TouchableOpacity onPress={() => router.push("/register")} className="mt-12">
-        <Text className="text-center text-slate-400 font-bold uppercase text-[10px] tracking-widest">
-          New Associate? <Text className="text-indigo-600 font-extrabold">Initialize Profile</Text>
+      <TouchableOpacity onPress={() => router.push("/register")} className="mt-8">
+        <Text className="text-center text-secondaryText font-medium text-[14px]">
+          Don't have an account? <Text className="text-accent font-bold">Sign Up</Text>
         </Text>
       </TouchableOpacity>
 

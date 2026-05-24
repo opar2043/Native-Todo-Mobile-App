@@ -2,6 +2,7 @@ import { View, Text, ActivityIndicator, ScrollView, TouchableOpacity } from 'rea
 import React, { useEffect, useState } from 'react'
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 export default function Namaz() {
   const [prayer, setPrayer] = useState(null);
@@ -9,6 +10,7 @@ export default function Namaz() {
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('prayer'); // 'prayer', 'suras', 'tasbih'
   const [count, setCount] = useState(0);
+  const router = useRouter();
 
   useEffect(() => {
     const getData = async () => {
@@ -33,7 +35,7 @@ export default function Namaz() {
         // Get Suras
         const suraRes = await fetch('https://api.alquran.cloud/v1/surah');
         const suraData = await suraRes.json();
-        setSuras(suraData.data.slice(0, 20)); // Just first 20 for now
+        setSuras(suraData.data); // All 114 suras
 
         setLoading(false);
       } catch (error) {
@@ -61,109 +63,136 @@ export default function Namaz() {
   const nextPrayer = getNextPrayer();
 
   return (
-    <View className="flex-1 bg-white">
-      {/* Tab Selector */}
-      <View className="flex-row mt-12 px-6 mb-10">
-        <TabButton active={tab === 'prayer'} label="PRAYERS" onPress={() => setTab('prayer')} />
-        <TabButton active={tab === 'suras'} label="QURAN" onPress={() => setTab('suras')} />
-        <TabButton active={tab === 'tasbih'} label="TASBIH" onPress={() => setTab('tasbih')} />
+    <View className="flex-1 bg-background pt-12">
+      {/* Header */}
+      <View className="flex-row justify-between items-center px-5 mb-6">
+        <TouchableOpacity onPress={() => router.back()} className="p-1">
+          <Ionicons name="arrow-back" size={24} color="#010101" />
+        </TouchableOpacity>
+        <Text className="text-[20px] font-bold text-primaryText">Daily Namaz</Text>
+        <TouchableOpacity>
+          <Ionicons name="pencil" size={20} color="#010101" />
+        </TouchableOpacity>
       </View>
 
-      <ScrollView className="px-6">
+      <ScrollView className="px-5 pb-24" showsVerticalScrollIndicator={false}>
+        
+        {/* Custom Tabs */}
+        <View className="flex-row bg-card rounded-[14px] p-1 mb-6 border border-gray-100 shadow-sm">
+          <TouchableOpacity 
+            onPress={() => setTab('prayer')}
+            className={`flex-1 py-2 rounded-[10px] items-center ${tab === 'prayer' ? 'bg-background' : ''}`}
+          >
+            <Text className={`font-bold text-[14px] ${tab === 'prayer' ? 'text-primaryText' : 'text-secondaryText'}`}>Prayers</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            onPress={() => setTab('suras')}
+            className={`flex-1 py-2 rounded-[10px] items-center ${tab === 'suras' ? 'bg-background' : ''}`}
+          >
+            <Text className={`font-bold text-[14px] ${tab === 'suras' ? 'text-primaryText' : 'text-secondaryText'}`}>Quran</Text>
+          </TouchableOpacity>
+        </View>
+
         {tab === 'prayer' ? (
-          <View>
-            <View className="items-center mb-10">
-                <View className="bg-indigo-50 w-20 h-20 rounded-md items-center justify-center mb-4 border border-indigo-100">
-                    <Ionicons name="moon-outline" size={40} color="#4F46E5" />
-                </View>
-                <Text className="text-3xl font-bold text-slate-900 tracking-tight">Islamic Resource Pro</Text>
-                <Text className="text-slate-400 font-bold uppercase tracking-[4px] text-[9px] mt-1">Spiritual Guidance System</Text>
-            </View>
+          <>
+            {/* Date */}
+        <Text className="text-secondaryText text-[15px] font-medium mb-4">24 February, 2024</Text>
 
-            {nextPrayer && (
-                <View className="bg-indigo-600 rounded-md p-6 mb-10 shadow-md shadow-indigo-600/20 flex-row justify-between items-center">
-                    <View>
-                        <Text className="text-white/70 font-extrabold text-[9px] uppercase tracking-widest">Next Appointed Time</Text>
-                        <Text className="text-white text-2xl font-bold mt-1">{nextPrayer.name}</Text>
-                    </View>
-                    <Text className="text-white text-3xl font-light">{nextPrayer.time}</Text>
-                </View>
-            )}
+        {/* Stats Chips */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="mb-6">
+          <View className="bg-[#E6F4EA] px-4 py-2 rounded-full mr-3 flex-row items-center">
+            <Text className="text-[14px] mr-2">🌟</Text>
+            <Text className="text-[#137333] font-bold text-[13px]">Fajr</Text>
+          </View>
+          <View className="bg-[#E8F0FE] px-4 py-2 rounded-full mr-3 flex-row items-center">
+            <Text className="text-[14px] mr-2">⏰</Text>
+            <Text className="text-[#1967D2] font-bold text-[13px]">5 Prayers</Text>
+          </View>
+          <View className="bg-[#FCE8E6] px-4 py-2 rounded-full mr-3 flex-row items-center">
+            <Text className="text-[14px] mr-2">👤</Text>
+            <Text className="text-[#C5221F] font-bold text-[13px]">3 Done</Text>
+          </View>
+        </ScrollView>
 
-            <Text className="text-slate-400 text-[9px] font-extrabold uppercase mb-5 tracking-[4px]">Daily Schedule</Text>
-            {prayer && Object.entries(prayer).slice(0, 6).map(([name, time]) => (
-              <View
-                key={name}
-                className={`p-5 rounded-md mb-3 flex-row justify-between items-center border ${nextPrayer?.name === name ? 'bg-indigo-50 border-indigo-200 shadow-sm' : 'bg-white border-slate-100 shadow-sm'}`}
-              >
-                <View className="flex-row items-center">
-                    <View className={`w-10 h-10 rounded-md items-center justify-center mr-4 border ${nextPrayer?.name === name ? 'bg-white border-indigo-100' : 'bg-slate-50 border-slate-100'}`}>
-                        <Ionicons name="time-outline" size={18} color={nextPrayer?.name === name ? "#4F46E5" : "#94A3B8"} />
-                    </View>
-                    <Text className="text-slate-900 text-base font-bold">{name}</Text>
-                </View>
-                <Text className="text-indigo-600 font-bold text-lg">{String(time)}</Text>
-              </View>
-            ))}
-          </View>
-        ) : tab === 'suras' ? (
-          <View>
-            <Text className="text-slate-400 text-[9px] font-extrabold uppercase mb-6 tracking-[4px]">The Holy Quran Index</Text>
-            {suras.map((sura) => (
-              <TouchableOpacity
-                key={sura.number}
-                className="bg-white p-5 rounded-md mb-4 flex-row justify-between items-center border border-slate-100 shadow-sm"
-              >
-                <View className="flex-row items-center flex-1">
-                    <View className="bg-indigo-600 w-12 h-12 rounded-md items-center justify-center mr-5 shadow-sm">
-                        <Text className="text-white font-bold text-lg">{sura.number}</Text>
-                    </View>
-                    <View>
-                        <Text className="text-slate-900 font-bold text-base">{sura.englishName}</Text>
-                        <Text className="text-slate-400 font-bold text-[10px] uppercase tracking-widest">{sura.revelationType} • {sura.numberOfAyahs} Ayahs</Text>
-                    </View>
-                </View>
-                <Text className="text-indigo-600 font-bold text-2xl ml-2">{sura.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ) : (
-          <View className="items-center py-10">
-            <Text className="text-slate-400 text-[9px] font-extrabold uppercase mb-12 tracking-[4px]">Dhikr Counter Pro</Text>
+        {/* Premium Next Prayer Hero */}
+        {nextPrayer && (
+          <View className="bg-accent p-6 rounded-[24px] mb-8 shadow-lg shadow-accent/30 relative overflow-hidden">
+            <View className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full" />
+            <View className="absolute -left-10 -bottom-10 w-32 h-32 bg-white/10 rounded-full" />
             
-            <View className="bg-slate-50 w-72 h-72 rounded-md border border-slate-100 items-center justify-center shadow-inner relative">
-                <Text className="text-indigo-600 text-8xl font-light tracking-tighter">{count}</Text>
-                <Text className="text-slate-400 uppercase font-extrabold tracking-[4px] text-[9px] mt-6">Sequence Count</Text>
+            <View className="flex-row justify-between items-start mb-6">
+              <View>
+                <Text className="text-white/80 font-medium text-[14px] mb-1">Upcoming Prayer</Text>
+                <Text className="text-white font-bold text-[32px]">{nextPrayer.name}</Text>
+              </View>
+              <View className="bg-white/20 px-3 py-1.5 rounded-full">
+                <Text className="text-white font-bold text-[14px]">{nextPrayer.time}</Text>
+              </View>
             </View>
-
-            <TouchableOpacity 
-                onPress={() => setCount(count + 1)}
-                className="bg-indigo-600 w-24 h-24 rounded-md mt-16 items-center justify-center shadow-lg shadow-indigo-600/30 active:opacity-90"
-            >
-                <Ionicons name="finger-print" size={40} color="white" />
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-                onPress={() => setCount(0)}
-                className="mt-16 border border-slate-200 px-12 py-4 rounded-md bg-white shadow-sm"
-            >
-                <Text className="text-slate-400 font-extrabold uppercase text-[10px] tracking-widest">Reset Sequence</Text>
-            </TouchableOpacity>
+            
+            <View className="bg-white/20 h-1.5 rounded-full w-full mb-3 overflow-hidden">
+              <View className="bg-white h-full rounded-full w-2/3" />
+            </View>
+            <View className="flex-row justify-between">
+              <Text className="text-white/90 text-[13px] font-medium">Time remaining</Text>
+              <Text className="text-white font-bold text-[13px]">- 45 mins</Text>
+            </View>
           </View>
         )}
-        <View className="h-24" />
+
+        {/* Prayer List */}
+        <Text className="text-[20px] font-bold text-primaryText mb-4">Today's Schedule</Text>
+        
+        {prayer && Object.entries(prayer).slice(0, 6).map(([name, time]) => {
+          const isDone = name === 'Fajr' || name === 'Dhuhr' || name === 'Asr'; // Mocking done state
+          return (
+            <View key={name} className="bg-card p-4 rounded-[20px] mb-3 flex-row justify-between items-center shadow-sm border border-gray-100">
+              <View className="flex-row items-center">
+                <View className="w-10 h-10 rounded-full bg-background items-center justify-center mr-4">
+                  <Ionicons name="moon-outline" size={20} color="#6B6B6B" />
+                </View>
+                <View>
+                  <Text className="font-bold text-[16px] text-primaryText">{name}</Text>
+                  <Text className="text-secondaryText text-[13px]">{String(time)}</Text>
+                </View>
+              </View>
+              <TouchableOpacity className={`w-6 h-6 rounded-full border-2 items-center justify-center ${isDone ? 'bg-success border-success' : 'border-gray-300'}`}>
+                {isDone && <Ionicons name="checkmark" size={14} color="#FFFFFF" />}
+              </TouchableOpacity>
+            </View>
+          );
+        })}
+          </>
+        ) : (
+          /* Quran Suras List */
+          <View>
+            <Text className="text-[20px] font-bold text-primaryText mb-4">All Surahs</Text>
+            {loading ? (
+              <ActivityIndicator size="large" color="#FF6B35" className="mt-10" />
+            ) : (
+              suras.map((sura) => (
+                <TouchableOpacity 
+                  key={sura.number} 
+                  onPress={() => router.push(`/surah/${sura.number}`)}
+                  className="bg-card p-4 rounded-[20px] mb-3 flex-row justify-between items-center shadow-sm border border-gray-100"
+                >
+                  <View className="flex-row items-center">
+                    <View className="w-10 h-10 rounded-full bg-background items-center justify-center mr-4">
+                      <Text className="font-bold text-primaryText text-[12px]">{sura.number}</Text>
+                    </View>
+                    <View>
+                      <Text className="font-bold text-[16px] text-primaryText">{sura.englishName}</Text>
+                      <Text className="text-secondaryText text-[12px]">{sura.englishNameTranslation} • {sura.numberOfAyahs} Ayahs</Text>
+                    </View>
+                  </View>
+                  <Text className="font-bold text-[18px] text-accent">{sura.name}</Text>
+                </TouchableOpacity>
+              ))
+            )}
+          </View>
+        )}
+        
       </ScrollView>
     </View>
-  );
-}
-
-function TabButton({ active, label, onPress }) {
-  return (
-    <TouchableOpacity 
-      onPress={onPress}
-      className={`flex-1 py-4 rounded-md items-center border ${active ? 'bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-600/20' : 'bg-white border-slate-100 ml-2'}`}
-    >
-      <Text className={`font-extrabold text-[10px] tracking-widest ${active ? 'text-white' : 'text-slate-400'}`}>{label}</Text>
-    </TouchableOpacity>
   );
 }

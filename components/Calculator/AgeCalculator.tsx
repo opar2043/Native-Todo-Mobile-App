@@ -9,8 +9,10 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Clipboard from "expo-clipboard";
+import { useRouter } from "expo-router";
 
 export default function AgeCalculator() {
+  const router = useRouter();
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
@@ -95,121 +97,128 @@ export default function AgeCalculator() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white px-6 pt-10">
-      <View className="mb-10 items-center">
-        <Text className="text-indigo-600 font-extrabold uppercase tracking-[4px] text-[10px] mb-2 text-center">Biometric Analysis</Text>
-        <Text className="text-3xl font-bold text-slate-900 text-center">Age Statistics Pro</Text>
-      </View>
-
-      <View className="bg-slate-50 border border-slate-100 p-8 rounded-md shadow-sm mb-10">
-        <Text className="text-slate-400 mb-6 font-extrabold uppercase text-[10px] tracking-widest text-center">Verify Birth Matrix</Text>
-        
-        <View className="flex-row justify-between mb-8">
-          <InputGroup label="Day" value={day} onChange={setDay} placeholder="15" />
-          <InputGroup label="Month" value={month} onChange={setMonth} placeholder="05" />
-          <InputGroup label="Year" value={year} onChange={setYear} placeholder="1995" wide />
-        </View>
-
-        <TouchableOpacity
-          onPress={calculateAge}
-          className="bg-indigo-600 py-4 rounded-md shadow-md shadow-indigo-600/20 flex-row justify-center items-center"
-        >
-          <Ionicons name="analytics-outline" size={20} color="white" />
-          <Text className="text-white text-center font-bold text-base ml-2 uppercase tracking-widest">Execute Analysis</Text>
+    <View className="flex-1 bg-background pt-12">
+      {/* Header */}
+      <View className="flex-row justify-between items-center px-5 mb-6">
+        <TouchableOpacity onPress={() => router.back()} className="p-1">
+          <Ionicons name="arrow-back" size={24} color="#010101" />
+        </TouchableOpacity>
+        <Text className="text-[20px] font-bold text-primaryText">Age Calculator</Text>
+        <TouchableOpacity>
+          <Ionicons name="ellipsis-horizontal" size={24} color="#010101" />
         </TouchableOpacity>
       </View>
 
-      {ageData && (
-        <View className="mb-24">
-          <View className="flex-row justify-between items-center mb-8">
-            <Text className="text-lg font-bold text-slate-900 uppercase tracking-tight">Biological Audit</Text>
-            <TouchableOpacity onPress={copyToClipboard} className="flex-row items-center bg-white border border-slate-200 px-4 py-2 rounded-md shadow-sm">
-              <Ionicons name="copy-outline" size={16} color="#4F46E5" />
-              <Text className="text-indigo-600 text-[10px] ml-2 font-extrabold uppercase tracking-widest">Copy Report</Text>
-            </TouchableOpacity>
+      <ScrollView className="px-5 pb-24" showsVerticalScrollIndicator={false}>
+        
+        {/* Hero Section */}
+        <View className="items-center mb-8">
+          <View className="w-20 h-20 rounded-full bg-primaryText items-center justify-center mb-4 shadow-sm">
+             <Ionicons name="timer" size={40} color="#FFFFFF" />
           </View>
-
-          {/* Century Progress */}
-          <View className="bg-slate-50 border border-slate-100 p-6 rounded-md mb-8 shadow-sm">
-            <View className="flex-row justify-between mb-3 items-end">
-                <Text className="text-slate-400 font-extrabold text-[9px] uppercase tracking-widest">Life Cycle Progress</Text>
-                <Text className="text-indigo-600 font-extrabold text-[12px]">{ageData.progress}%</Text>
-            </View>
-            <View className="h-2.5 bg-white rounded-md overflow-hidden border border-slate-100 shadow-inner">
-                <View className="h-full bg-indigo-600" style={{ width: `${ageData.progress}%` }} />
-            </View>
-          </View>
-
-          {/* Results Grid */}
-          <View className="flex-row flex-wrap justify-between">
-            <ResultItem label="Years" value={ageData.years} color="#1E293B" />
-            <ResultItem label="Months" value={ageData.months} color="#4F46E5" />
-            <ResultItem label="Days" value={ageData.days} color="#6366F1" />
-          </View>
-
-          {/* Secondary Stats */}
-          <View className="flex-row justify-between mt-8 mb-8">
-             <InfoCard label="Zodiac Matrix" value={ageData.zodiac} icon="sparkles-outline" color="#F59E0B" />
-             <InfoCard label="Birthday Lead" value={`${ageData.daysToNextBday} Days`} icon="calendar-outline" color="#3B82F6" />
-          </View>
-
-          <Text className="text-[10px] font-extrabold text-slate-400 uppercase mb-4 tracking-[6px] text-center">Extended Lifetime Metrics</Text>
-          <View className="flex-row flex-wrap justify-between">
-            <MiniStat label="Total Months" value={ageData.totalMonths.toLocaleString()} />
-            <MiniStat label="Total Weeks" value={ageData.totalWeeks.toLocaleString()} />
-            <MiniStat label="Total Days" value={ageData.totalDays.toLocaleString()} />
-            <MiniStat label="Total Hours" value={ageData.totalHours.toLocaleString()} />
-          </View>
+          <Text className="text-[28px] font-bold text-primaryText">Age Calculator</Text>
+          <Text className="text-secondaryText text-[15px] mt-1">Enter your date of birth</Text>
         </View>
-      )}
-    </ScrollView>
+
+        {/* Input fields */}
+        <View className="flex-row justify-between mb-6">
+          <InputGroup label="Day" value={day} onChange={setDay} placeholder="DD" />
+          <InputGroup label="Month" value={month} onChange={setMonth} placeholder="MM" />
+          <InputGroup label="Year" value={year} onChange={setYear} placeholder="YYYY" wide />
+        </View>
+        <TouchableOpacity
+          onPress={calculateAge}
+          className="bg-accent h-[48px] rounded-[14px] flex-row justify-center items-center shadow-md mb-8"
+        >
+          <Text className="text-white font-bold text-[15px]">Calculate Age</Text>
+        </TouchableOpacity>
+
+        {ageData && (
+          <View>
+             {/* Result display */}
+             <View className="bg-card p-6 rounded-[20px] shadow-sm mb-6 items-center border border-gray-100">
+                <Text className="text-[28px] font-bold text-accent mb-1">
+                   {ageData.years} <Text className="text-[18px] font-normal text-secondaryText">Years</Text>
+                </Text>
+                <Text className="text-[18px] font-bold text-primaryText">
+                  {ageData.months} <Text className="font-normal text-secondaryText">Months</Text> • {ageData.days} <Text className="font-normal text-secondaryText">Days</Text>
+                </Text>
+             </View>
+
+             <View className="flex-row flex-wrap justify-between mb-8 gap-y-4">
+               <View className="bg-card w-[48%] p-3 rounded-[20px] shadow-sm items-center border border-gray-100">
+                 <Text className="text-secondaryText text-[12px] mb-1">Total Months</Text>
+                 <Text className="font-bold text-[16px] text-primaryText">{ageData.totalMonths}</Text>
+               </View>
+               <View className="bg-card w-[48%] p-3 rounded-[20px] shadow-sm items-center border border-gray-100">
+                 <Text className="text-secondaryText text-[12px] mb-1">Total Weeks</Text>
+                 <Text className="font-bold text-[16px] text-primaryText">{ageData.totalWeeks}</Text>
+               </View>
+               <View className="bg-card w-[31%] p-3 rounded-[20px] shadow-sm items-center border border-gray-100">
+                 <Text className="text-secondaryText text-[12px] mb-1">Total Days</Text>
+                 <Text className="font-bold text-[16px] text-primaryText">{ageData.totalDays}</Text>
+               </View>
+               <View className="bg-card w-[31%] p-3 rounded-[20px] shadow-sm items-center border border-gray-100">
+                 <Text className="text-secondaryText text-[12px] mb-1">Heartbeats</Text>
+                 <Text className="font-bold text-[16px] text-primaryText" adjustsFontSizeToFit numberOfLines={1}>{(ageData.totalDays * 103680).toLocaleString()}</Text>
+               </View>
+               <View className="bg-card w-[31%] p-3 rounded-[20px] shadow-sm items-center border border-gray-100">
+                 <Text className="text-secondaryText text-[12px] mb-1">Zodiac</Text>
+                 <Text className="font-bold text-[16px] text-primaryText" adjustsFontSizeToFit numberOfLines={1}>{ageData.zodiac}</Text>
+               </View>
+             </View>
+
+             {/* Upcoming Milestone */}
+             <View className="bg-[#E6F4EA] p-4 rounded-[20px] mb-6 flex-row items-center justify-between shadow-sm border border-green-100">
+               <View className="flex-row items-center flex-1">
+                 <View className="w-10 h-10 bg-white rounded-full items-center justify-center mr-3 shadow-sm">
+                   <Ionicons name="gift" size={20} color="#137333" />
+                 </View>
+                 <View>
+                   <Text className="text-[#137333] font-bold text-[15px] mb-1">Upcoming Milestone</Text>
+                   <Text className="text-[#137333]/80 text-[13px] font-medium">You will be {Number(ageData.years) + 1} soon!</Text>
+                 </View>
+               </View>
+               <View className="bg-white px-3 py-1.5 rounded-full shadow-sm">
+                 <Text className="text-[#137333] font-bold text-[13px]">{ageData.daysToNextBday}d left</Text>
+               </View>
+             </View>
+
+             {/* Bottom Stats Card */}
+             <View className="bg-card p-5 rounded-[24px] shadow-sm mb-6 flex-row items-center justify-between">
+                <View className="flex-1">
+                  <View className="flex-row items-center mb-3">
+                    <Ionicons name="sparkles" size={20} color="#FF6B35" />
+                    <Text className="font-bold text-[18px] text-primaryText ml-2">Zodiac Sign</Text>
+                    <View className="bg-[#E8F0FE] px-2 py-1 rounded-full ml-3">
+                      <Text className="text-[#1967D2] font-bold text-[10px]">PRO</Text>
+                    </View>
+                  </View>
+                  <View className="flex-row items-center mb-2">
+                    <Ionicons name="star" size={16} color="#6B6B6B" />
+                    <Text className="text-secondaryText font-medium ml-2">{ageData.zodiac}</Text>
+                  </View>
+                </View>
+             </View>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
 
 function InputGroup({ label, value, onChange, placeholder, wide }) {
   return (
-    <View className={`${wide ? "w-[35%]" : "w-[28%]"}`}>
-      <Text className="text-[9px] text-slate-400 mb-2 uppercase font-extrabold tracking-[2px] text-center">{label}</Text>
+    <View className={`${wide ? "w-[35%]" : "w-[30%]"}`}>
       <TextInput
         placeholder={placeholder}
-        placeholderTextColor="#CBD5E1"
+        placeholderTextColor="#6B6B6B"
         keyboardType="numeric"
         value={value}
         onChangeText={onChange}
-        className="bg-white border border-slate-100 p-4 rounded-md text-center font-bold text-xl text-slate-900 shadow-sm"
+        className="bg-card h-[56px] rounded-[14px] text-center font-bold text-[18px] text-primaryText shadow-sm"
       />
-    </View>
-  );
-}
-
-function ResultItem({ label, value, color }) {
-  return (
-    <View className="bg-slate-50 border border-slate-100 p-6 rounded-md w-[31%] items-center shadow-sm">
-      <Text className="text-4xl font-light tracking-tighter" style={{ color }}>{value}</Text>
-      <Text className="text-slate-400 text-[10px] font-extrabold uppercase mt-2 tracking-widest">{label}</Text>
-    </View>
-  );
-}
-
-function InfoCard({ label, value, icon, color }) {
-  return (
-    <View className="bg-white border border-slate-100 p-5 rounded-md w-[48%] flex-row items-center shadow-sm">
-      <View className="bg-slate-50 w-10 h-10 rounded-md items-center justify-center mr-4">
-        <Ionicons name={icon} size={20} color={color} />
-      </View>
-      <View>
-        <Text className="text-slate-400 text-[9px] font-extrabold uppercase tracking-widest">{label}</Text>
-        <Text className="text-slate-900 font-bold text-sm tracking-tight">{value}</Text>
-      </View>
-    </View>
-  );
-}
-
-function MiniStat({ label, value }) {
-  return (
-    <View className="bg-slate-50 border border-slate-100 p-5 rounded-md w-[48%] mb-4 shadow-sm">
-      <Text className="text-slate-400 text-[9px] font-extrabold uppercase mb-1 tracking-widest">{label}</Text>
-      <Text className="text-slate-900 font-bold text-lg tracking-tighter">{value}</Text>
+      <Text className="text-[13px] text-secondaryText mt-2 text-center font-medium">{label}</Text>
     </View>
   );
 }

@@ -9,15 +9,15 @@ export default function WeatherScreen() {
   const router = useRouter();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <View className="px-6 pt-4 flex-row items-center">
+    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+      <View className="px-5 pt-4 flex-row items-center mb-4">
         <TouchableOpacity 
           onPress={() => router.back()}
-          className="bg-slate-50 w-10 h-10 rounded-md items-center justify-center border border-slate-100"
+          className="w-10 h-10 items-center justify-center mr-2"
         >
-          <Ionicons name="chevron-back" size={20} color="#1E293B" />
+          <Ionicons name="arrow-back" size={24} color="#010101" />
         </TouchableOpacity>
-        <Text className="ml-4 text-slate-900 font-bold text-lg">Atmospheric Report</Text>
+        <Text className="text-[20px] font-bold text-primaryText">Atmospheric Report</Text>
       </View>
       <Weather />
     </SafeAreaView>

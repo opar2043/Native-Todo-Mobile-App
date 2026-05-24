@@ -4,8 +4,8 @@ import Calculator from '../components/Calculator/Calculator'
 
 export default function calculator() {
   return (
-    <View>
-      <Calculator></Calculator>
+    <View className="flex-1 bg-background pt-8">
+      <Calculator />
     </View>
   )
 }

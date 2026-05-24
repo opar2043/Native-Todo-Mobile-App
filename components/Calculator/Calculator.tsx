@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function Calculator() {
   const [input, setInput] = useState("");
+  const [history, setHistory] = useState([]);
+  const router = useRouter();
 
   const buttons = [
     "C", "⌫", "%", "/",
@@ -20,6 +24,7 @@ export default function Calculator() {
     } else if (btn === "=") {
       try {
         const result = eval(input); // 🔥 easiest way
+        setHistory(prev => [...prev.slice(-4), { equation: input, result: result.toString() }]);
         setInput(result.toString());
       } catch {
         setInput("Error");
@@ -30,20 +35,32 @@ export default function Calculator() {
   };
 
   return (
-    <View className="flex-1 bg-white px-6 justify-center">
+    <View className="flex-1 bg-background justify-center">
       
-      {/* Executive Header */}
-      <View className="mb-10 items-center">
-        <Text className="text-indigo-600 font-extrabold uppercase tracking-[6px] text-[10px]">Accounting Interface</Text>
-        <Text className="text-2xl font-bold text-slate-900 mt-1">Standard Calculator</Text>
+      {/* Header */}
+      <View className="flex-row justify-between items-center px-5 mb-4">
+        <TouchableOpacity onPress={() => router.back()} className="p-1">
+          <Ionicons name="arrow-back" size={24} color="#010101" />
+        </TouchableOpacity>
+        <Text className="text-[20px] font-bold text-primaryText">Calculator Pro</Text>
+        <TouchableOpacity>
+          <Ionicons name="time-outline" size={24} color="#010101" />
+        </TouchableOpacity>
       </View>
 
-      {/* Display */}
-      <View className="bg-slate-50 border border-slate-100 p-10 rounded-md mb-8 shadow-inner relative">
-        <View className="absolute top-3 right-4">
-            <Text className="text-slate-300 font-extrabold text-[8px] uppercase tracking-widest">Logic Processor</Text>
+      <View className="px-5 flex-1 justify-end pb-8">
+        {/* History Area */}
+        <View className="mb-4 h-24 justify-end items-end">
+          {history.map((item, index) => (
+            <Text key={index} className="text-secondaryText text-[16px] mb-1">
+              {item.equation} = <Text className="font-bold text-primaryText">{item.result}</Text>
+            </Text>
+          ))}
         </View>
-        <Text className="text-right text-6xl font-light text-slate-900 tracking-tighter" numberOfLines={1} adjustsFontSizeToFit>
+
+      {/* Display */}
+      <View className="bg-card border border-gray-100 p-8 rounded-[20px] mb-8 shadow-sm relative">
+        <Text className="text-right text-[64px] font-light text-primaryText tracking-tighter" numberOfLines={1} adjustsFontSizeToFit>
           {input || "0"}
         </Text>
       </View>
@@ -54,21 +71,18 @@ export default function Calculator() {
           <TouchableOpacity
             key={index}
             onPress={() => handlePress(btn)}
-            className={`w-[22%] py-6 mb-4 rounded-md items-center border shadow-sm
-              ${["/", "*", "-", "+", "=", "%"].includes(btn) ? "bg-indigo-600 border-indigo-600 shadow-md shadow-indigo-600/20" : "bg-white border-slate-100"}
-              ${btn === "C" ? "bg-rose-50 border-rose-100" : ""}
-              ${btn === "⌫" ? "bg-slate-50 border-slate-100" : ""}
+            className={`w-[22%] h-[72px] mb-4 rounded-[14px] items-center justify-center shadow-sm
+              ${["/", "*", "-", "+", "=", "%"].includes(btn) ? "bg-accent" : "bg-card border border-gray-100"}
+              ${btn === "C" ? "bg-[#FCE8E6] border-[#FAD2CF]" : ""}
+              ${btn === "⌫" ? "bg-card border border-gray-100" : ""}
             `}
           >
-            <Text className={`text-xl font-bold ${["/", "*", "-", "+", "=", "%"].includes(btn) ? "text-white" : btn === "C" ? "text-rose-600" : "text-slate-700"}`}>
+            <Text className={`text-[24px] font-bold ${["/", "*", "-", "+", "=", "%"].includes(btn) ? "text-white" : btn === "C" ? "text-[#C5221F]" : "text-primaryText"}`}>
               {btn}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
-      
-      <View className="mt-10 border-t border-slate-50 pt-6">
-        <Text className="text-slate-300 font-extrabold text-[8px] uppercase tracking-[8px] text-center">Executive Systems Pro</Text>
       </View>
     </View>
   );

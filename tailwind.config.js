@@ -7,7 +7,20 @@ module.exports = {
     "./components/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        background: '#EFEFEF',
+        primaryText: '#010101',
+        secondaryText: '#6B6B6B',
+        accent: '#FF6B35',
+        success: '#4CAF82',
+        card: '#FFFFFF',
+      },
+      borderRadius: {
+        'card': '20px',
+        'btn': '14px',
+      }
+    },
   },
   plugins: [],
   darkMode: "class", 

@@ -52,106 +52,105 @@ export default function BMI() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-        <ScrollView className="flex-1 px-6 pt-4">
+    <SafeAreaView className="flex-1 bg-background" edges={['top']}>
+        <ScrollView className="flex-1 px-5 pt-4" showsVerticalScrollIndicator={false}>
         {/* HEADER */}
-        <View className="flex-row items-center mb-10">
+        <View className="flex-row items-center mb-8">
             <TouchableOpacity 
                 onPress={() => router.back()}
-                className="w-10 h-10 rounded-md bg-slate-50 border border-slate-100 items-center justify-center mr-4"
+                className="w-10 h-10 items-center justify-center mr-2"
             >
-                <Ionicons name="chevron-back" size={20} color="#1E293B" />
+                <Ionicons name="arrow-back" size={24} color="#010101" />
             </TouchableOpacity>
             <View>
-                <Text className="text-indigo-600 font-extrabold uppercase tracking-[4px] text-[9px]">Biometric Unit</Text>
-                <Text className="text-2xl font-bold text-slate-900">Health Scan Pro</Text>
+                <Text className="text-[20px] font-bold text-primaryText">Health Scan Pro</Text>
             </View>
+        </View>
+
+        {/* HERO */}
+        <View className="items-center mb-8">
+          <View className="w-20 h-20 rounded-full bg-primaryText items-center justify-center mb-4 shadow-sm">
+             <Ionicons name="pulse" size={40} color="#FFFFFF" />
+          </View>
+          <Text className="text-secondaryText text-[15px]">Calculate your Body Mass Index</Text>
         </View>
 
         {/* INPUT SECTION */}
-        <View className="bg-slate-50 border border-slate-100 p-8 rounded-md shadow-sm mb-10">
-            <Text className="text-slate-400 mb-6 font-extrabold uppercase text-[9px] tracking-widest text-center">Physical Parameters</Text>
-            
-            <View className="flex-row justify-between mb-8">
+        <View className="flex-row justify-between mb-6">
             <View className="w-[48%]">
-                <Text className="text-[9px] text-slate-400 mb-2 uppercase font-extrabold tracking-[2px] text-center">Height (cm)</Text>
                 <TextInput
-                placeholder="175"
-                placeholderTextColor="#CBD5E1"
+                placeholder="Height (cm)"
+                placeholderTextColor="#6B6B6B"
                 keyboardType="numeric"
                 value={height}
                 onChangeText={setHeight}
-                className="bg-white border border-slate-100 p-4 rounded-md text-center font-bold text-xl text-slate-900 shadow-sm"
+                className="bg-card h-[56px] rounded-[14px] text-center font-bold text-[18px] text-primaryText shadow-sm"
                 />
+                <Text className="text-[13px] text-secondaryText mt-2 text-center font-medium">Height (cm)</Text>
             </View>
             <View className="w-[48%]">
-                <Text className="text-[9px] text-slate-400 mb-2 uppercase font-extrabold tracking-[2px] text-center">Weight (kg)</Text>
                 <TextInput
-                placeholder="70"
-                placeholderTextColor="#CBD5E1"
+                placeholder="Weight (kg)"
+                placeholderTextColor="#6B6B6B"
                 keyboardType="numeric"
                 value={weight}
                 onChangeText={setWeight}
-                className="bg-white border border-slate-100 p-4 rounded-md text-center font-bold text-xl text-slate-900 shadow-sm"
+                className="bg-card h-[56px] rounded-[14px] text-center font-bold text-[18px] text-primaryText shadow-sm"
                 />
+                <Text className="text-[13px] text-secondaryText mt-2 text-center font-medium">Weight (kg)</Text>
             </View>
-            </View>
-
-            <TouchableOpacity
-            onPress={calculateBMI}
-            className="bg-indigo-600 py-4 rounded-md shadow-md shadow-indigo-600/20 flex-row justify-center items-center"
-            >
-            {loading ? (
-                <ActivityIndicator color="white" />
-            ) : (
-                <>
-                    <Ionicons name="pulse-outline" size={20} color="white" />
-                    <Text className="text-white text-center font-bold text-base ml-2 uppercase tracking-widest">Execute Scan</Text>
-                </>
-            )}
-            </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+        onPress={calculateBMI}
+        className="bg-accent h-[48px] rounded-[14px] flex-row justify-center items-center shadow-md mb-8"
+        >
+        {loading ? (
+            <ActivityIndicator color="white" />
+        ) : (
+            <Text className="text-white font-bold text-[15px]">Execute Scan</Text>
+        )}
+        </TouchableOpacity>
 
         {/* RESULTS SECTION */}
         {bmi && (
             <View className="mb-24">
-            <View className="items-center mb-10">
-                <Text className="text-slate-400 font-extrabold text-[10px] uppercase tracking-widest mb-2">Calculated Index</Text>
-                <View className="flex-row items-baseline">
-                    <Text className="text-7xl font-light text-slate-900 tracking-tighter">{bmi}</Text>
-                    <Text className="text-xl font-bold text-indigo-500 ml-2">BMI</Text>
+                <View className="bg-card p-6 rounded-[20px] shadow-sm mb-6 items-center">
+                    <Text className="text-[14px] text-secondaryText font-medium mb-1">Calculated BMI</Text>
+                    <View className="flex-row items-baseline">
+                        <Text className="text-[48px] font-bold text-primaryText">{bmi}</Text>
+                    </View>
+                    <View className="bg-[#E8F0FE] px-3 py-1 rounded-full mt-2">
+                        <Text className="text-accent font-bold text-[12px]">{status}</Text>
+                    </View>
                 </View>
-                <View className={`mt-6 px-8 py-2 rounded-md border ${getStatusColor().replace('text-', 'bg-').replace('500', '50')} ${getStatusColor().replace('text-', 'border-').replace('500', '100')}`}>
-                    <Text className={`${getStatusColor()} font-extrabold text-sm uppercase tracking-widest`}>{status}</Text>
-                </View>
-            </View>
 
-            {/* Range Indicator */}
-            <View className="bg-slate-50 border border-slate-100 p-6 rounded-md mb-8 shadow-sm">
-                <Text className="text-slate-400 font-extrabold text-[9px] uppercase tracking-widest mb-4 text-center">Clinical Scale</Text>
-                <View className="h-3 bg-white rounded-md overflow-hidden flex-row border border-slate-100 shadow-inner">
-                    <View className="flex-1 bg-blue-400" />
-                    <View className="flex-1 bg-emerald-400" />
-                    <View className="flex-1 bg-orange-400" />
-                    <View className="flex-1 bg-rose-400" />
+                {/* Range Indicator */}
+                <View className="bg-card p-5 rounded-[20px] shadow-sm mb-6 border border-gray-100">
+                    <Text className="text-secondaryText font-medium text-[13px] mb-3 text-center">Clinical Scale</Text>
+                    <View className="h-3 rounded-full overflow-hidden flex-row">
+                        <View className="flex-1 bg-blue-400" />
+                        <View className="flex-1 bg-success" />
+                        <View className="flex-1 bg-orange-400" />
+                        <View className="flex-1 bg-rose-400" />
+                    </View>
+                    <View className="flex-row justify-between mt-2">
+                        <Text className="text-secondaryText font-bold text-[10px] uppercase">Under</Text>
+                        <Text className="text-secondaryText font-bold text-[10px] uppercase">Optimal</Text>
+                        <Text className="text-secondaryText font-bold text-[10px] uppercase">Over</Text>
+                        <Text className="text-secondaryText font-bold text-[10px] uppercase">Obese</Text>
+                    </View>
                 </View>
-                <View className="flex-row justify-between mt-2">
-                    <Text className="text-slate-400 font-bold text-[8px] uppercase">Under</Text>
-                    <Text className="text-slate-400 font-bold text-[8px] uppercase">Optimal</Text>
-                    <Text className="text-slate-400 font-bold text-[8px] uppercase">Over</Text>
-                    <Text className="text-slate-400 font-bold text-[8px] uppercase">Obese</Text>
-                </View>
-            </View>
 
-            <View className="bg-slate-900 p-6 rounded-md shadow-xl flex-row items-center">
-                <View className="flex-1 pr-4">
-                    <Text className="text-white/60 font-bold uppercase text-[9px] mb-1">Clinical Observation</Text>
-                    <Text className="text-white font-bold text-base leading-5">
-                        Your index suggests a {status.toLowerCase()} profile. {bmi < 25 ? "Maintain balanced nutrition and regular activity." : "Consider optimizing your physical routine for better metrics."}
-                    </Text>
+                <View className="bg-primaryText p-5 rounded-[24px] shadow-sm flex-row items-center">
+                    <View className="flex-1 pr-4">
+                        <Text className="text-white/60 font-bold uppercase text-[10px] mb-1">Clinical Observation</Text>
+                        <Text className="text-white font-medium text-[14px]">
+                            Your index suggests a {status.toLowerCase()} profile. {bmi < 25 ? "Maintain balanced nutrition and regular activity." : "Consider optimizing your physical routine for better metrics."}
+                        </Text>
+                    </View>
+                    <Ionicons name="medical" size={32} color="#FF6B35" />
                 </View>
-                <Ionicons name="medical-outline" size={32} color="#4F46E5" />
-            </View>
             </View>
         )}
         </ScrollView>
