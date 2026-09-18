@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "demo-app",
-    "slug": "demo-app",
+    "name": "Daily Tracker",
+    "slug": "daily-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

@@ -1,22 +1,38 @@
-import { View, Text, TextInput, TouchableOpacity, ScrollView, Alert, FlatList } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Alert, FlatList, ActivityIndicator } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { taskService } from "../../components/shared/service/task.route";
 import useAuth from "../../components/Hooks/useAuth";
 import { useRouter } from "expo-router";
+import { useTheme } from "../../components/shared/theme";
 
 export default function TodoScreen() {
   const [title, setTitle] = useState("");
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [editedTitle, setEditedTitle] = useState("");
   const { user } = useAuth();
   const router = useRouter();
-  
-  const fetchTasks = () => {
-    fetch("https://task-management-server-one-gamma.vercel.app/tasks")
-      .then((res) => res.json())
-      .then((data) => setData(data));
+  const { colors, isDark } = useTheme();
+
+  const bg = isDark ? "bg-[#0E0E12]" : "bg-background";
+  const card = isDark ? "bg-[#1C1C23]" : "bg-card";
+  const primaryText = isDark ? "text-white" : "text-primaryText";
+  const secondaryText = isDark ? "text-[#A1A1AA]" : "text-secondaryText";
+  const border = isDark ? "border-[#2A2A32]" : "border-gray-100";
+
+  const fetchTasks = async () => {
+    try {
+      const response = await taskService.getTask();
+      setData(response || []);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "Failed to load tasks. Check your connection.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -24,21 +40,26 @@ export default function TodoScreen() {
   }, []);
 
   const handleAddTask = async () => {
-    if (!user || !title) return;
+    const trimmed = title.trim();
+    if (!user || !trimmed) return;
 
     const obj = {
-      title,
+      title: trimmed,
       isDone: false,
       name: user.displayName || "N/A",
       email: user.email || "N/A",
     };
 
+    setSubmitting(true);
     try {
       await taskService.addTask(obj);
       setTitle("");
-      fetchTasks();
+      await fetchTasks();
     } catch (error) {
       console.log(error);
+      Alert.alert("Error", "Failed to add task.");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -50,14 +71,12 @@ export default function TodoScreen() {
         style: "destructive",
         onPress: async () => {
           try {
-            const res = await fetch(
-              `https://task-management-server-one-gamma.vercel.app/tasks/${id}`,
-              { method: "DELETE" }
-            );
-            if (!res.ok) throw new Error("Delete failed");
-            fetchTasks();
+            const res = await taskService.deleteTask(id);
+            if (res.deletedCount === 0) throw new Error("Delete failed");
+            await fetchTasks();
           } catch (error) {
             console.log(error);
+            Alert.alert("Error", "Failed to delete task.");
           }
         },
       },
@@ -66,52 +85,54 @@ export default function TodoScreen() {
 
   const toggleDone = async (id, currentStatus) => {
     try {
-      await fetch(
-        `https://task-management-server-one-gamma.vercel.app/tasks/${id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ isDone: !currentStatus }),
-        }
-      );
-      fetchTasks();
+      await taskService.updateTask(id, { isDone: !currentStatus });
+      await fetchTasks();
     } catch (error) {
       console.log(error);
+      Alert.alert("Error", "Failed to update task.");
     }
   };
 
   const handleUpdate = async (id) => {
+    if (!editedTitle.trim()) return;
     try {
-      const res = await fetch(
-        `https://task-management-server-one-gamma.vercel.app/tasks/${id}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title: editedTitle }),
-        }
-      );
-      const resData = await res.json();
-      if (resData.modifiedCount > 0) {
+      const res = await taskService.updateTask(id, { title: editedTitle.trim() });
+      if (res.modifiedCount > 0 || res.updatedCount > 0) {
         setEditingId(null);
-        fetchTasks();
+        setEditedTitle("");
+        await fetchTasks();
+      } else {
+        setEditingId(null);
+        await fetchTasks();
       }
     } catch (error) {
       console.log(error);
+      Alert.alert("Error", "Failed to update task.");
     }
   };
 
-  const fetchData = data && data.filter((d) => d.email == user?.email);
+  const fetchData = Array.isArray(data) ? data.filter((d) => d.email === user?.email) : [];
+
+  const renderEmpty = () => (
+    <View className="items-center pt-16">
+      <View className="w-20 h-20 rounded-full bg-card items-center justify-center mb-4 shadow-sm">
+        <Ionicons name="checkmark-done" size={36} color="#6B6B6B" />
+      </View>
+      <Text className={`font-bold text-[18px] ${primaryText} mb-1`}>No tasks yet</Text>
+      <Text className={`text-[14px] ${secondaryText}`}>Add a task above to get started.</Text>
+    </View>
+  );
 
   return (
-    <View className="flex-1 bg-background pt-12">
+    <View className={`flex-1 ${bg} pt-12`}>
       {/* Header */}
       <View className="flex-row justify-between items-center px-5 mb-6">
         <TouchableOpacity onPress={() => router.back()} className="p-1">
-          <Ionicons name="arrow-back" size={24} color="#010101" />
+          <Ionicons name="arrow-back" size={24} color={colors.primaryText} />
         </TouchableOpacity>
-        <Text className="text-[20px] font-bold text-primaryText">My Tasks</Text>
+        <Text className={`text-[20px] font-bold ${primaryText}`}>My Tasks</Text>
         <TouchableOpacity>
-          <Ionicons name="ellipsis-horizontal" size={24} color="#010101" />
+          <Ionicons name="ellipsis-horizontal" size={24} color={colors.primaryText} />
         </TouchableOpacity>
       </View>
 
@@ -121,70 +142,87 @@ export default function TodoScreen() {
           placeholderTextColor="#6B6B6B"
           value={title}
           onChangeText={setTitle}
-          className="flex-1 bg-card h-[48px] rounded-[14px] px-4 font-normal text-[15px] text-primaryText shadow-sm mr-3 border border-gray-100"
+          onSubmitEditing={handleAddTask}
+          returnKeyType="done"
+          className={`flex-1 ${card} h-[48px] rounded-[14px] px-4 font-normal text-[15px] ${primaryText} shadow-sm mr-3 ${border}`}
         />
-        <TouchableOpacity 
+        <TouchableOpacity
           onPress={handleAddTask}
+          disabled={submitting}
           className="bg-accent w-[48px] h-[48px] rounded-[14px] items-center justify-center shadow-md"
         >
-          <Ionicons name="add" size={24} color="white" />
+          {submitting ? (
+            <ActivityIndicator size="small" color="white" />
+          ) : (
+            <Ionicons name="add" size={24} color="white" />
+          )}
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        className="px-5 mb-24"
-        data={fetchData}
-        keyExtractor={(item) => item._id}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View className="bg-card p-4 rounded-[20px] mb-4 flex-row items-center shadow-sm border border-gray-100">
-            <TouchableOpacity 
-              onPress={() => toggleDone(item._id, item.isDone)}
-              className={`w-6 h-6 rounded-full border-2 items-center justify-center mr-4 ${item.isDone ? 'bg-success border-success' : 'border-[#6B6B6B]'}`}
-            >
-              {item.isDone && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
-            </TouchableOpacity>
-            
-            <View className="flex-1 mr-2">
-              {editingId === item._id ? (
-                <TextInput
-                  value={editedTitle}
-                  onChangeText={setEditedTitle}
-                  className="bg-background border border-gray-100 p-2 rounded-md text-primaryText font-bold mb-1"
-                  autoFocus
-                />
-              ) : (
-                <Text className={`font-bold text-[16px] mb-1 ${item.isDone ? 'text-secondaryText line-through' : 'text-primaryText'}`}>
-                  {item.title}
-                </Text>
-              )}
-              <View className="flex-row">
-                <View className="bg-background px-2 py-1 rounded-[8px] mr-2">
-                  <Text className="text-secondaryText font-bold text-[10px] uppercase">Work</Text>
+      {loading ? (
+        <View className="flex-1 items-center pt-24">
+          <ActivityIndicator size="large" color={colors.accent} />
+        </View>
+      ) : (
+        <FlatList
+          className="px-5 mb-24"
+          data={fetchData}
+          keyExtractor={(item) => item._id}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={renderEmpty}
+          renderItem={({ item }) => (
+            <View className={`${card} p-4 rounded-[20px] mb-4 flex-row items-center shadow-sm ${border}`}>
+              <TouchableOpacity
+                onPress={() => toggleDone(item._id, item.isDone)}
+                className={`w-6 h-6 rounded-full border-2 items-center justify-center mr-4 ${item.isDone ? 'bg-success border-success' : 'border-[#6B6B6B]'}`}
+              >
+                {item.isDone && <Ionicons name="checkmark" size={16} color="#FFFFFF" />}
+              </TouchableOpacity>
+
+              <View className="flex-1 mr-2">
+                {editingId === item._id ? (
+                  <TextInput
+                    value={editedTitle}
+                    onChangeText={setEditedTitle}
+                    onSubmitEditing={() => handleUpdate(item._id)}
+                    className={`${bg} ${border} p-2 rounded-md ${primaryText} font-bold mb-1`}
+                    autoFocus
+                  />
+                ) : (
+                  <Text className={`font-bold text-[16px] mb-1 ${item.isDone ? `${secondaryText} line-through` : primaryText}`}>
+                    {item.title}
+                  </Text>
+                )}
+                <View className="flex-row">
+                  <View className={`${bg} px-2 py-1 rounded-[8px] mr-2`}>
+                    <Text className={`${secondaryText} font-bold text-[10px] uppercase`}>
+                      {item.isDone ? 'Done' : 'Active'}
+                    </Text>
+                  </View>
                 </View>
               </View>
-            </View>
 
-            <View className="flex-row items-center">
-              {editingId === item._id ? (
-                <TouchableOpacity onPress={() => handleUpdate(item._id)} className="w-8 h-8 items-center justify-center bg-success/20 rounded-full mr-2">
-                  <Ionicons name="checkmark" size={16} color="#4CAF82" />
+              <View className="flex-row items-center">
+                {editingId === item._id ? (
+                  <TouchableOpacity onPress={() => handleUpdate(item._id)} className="w-8 h-8 items-center justify-center bg-success/20 rounded-full mr-2">
+                    <Ionicons name="checkmark" size={16} color="#4CAF82" />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity onPress={() => {
+                    setEditingId(item._id);
+                    setEditedTitle(item.title);
+                  }} className={`w-8 h-8 items-center justify-center ${bg} rounded-full mr-2`}>
+                    <Ionicons name="pencil" size={16} color="#FF6B35" />
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={() => handleRemove(item._id)} className="w-8 h-8 items-center justify-center bg-red-50 rounded-full">
+                  <Ionicons name="trash-outline" size={16} color="#E11D48" />
                 </TouchableOpacity>
-              ) : (
-                <TouchableOpacity onPress={() => {
-                  setEditingId(item._id);
-                  setEditedTitle(item.title);
-                }} className="w-8 h-8 items-center justify-center bg-background rounded-full mr-2">
-                  <Ionicons name="pencil" size={16} color="#FF6B35" />
-                </TouchableOpacity>
-              )}
-              <TouchableOpacity onPress={() => handleRemove(item._id)} className="w-8 h-8 items-center justify-center bg-red-50 rounded-full">
-                <Ionicons name="trash-outline" size={16} color="#E11D48" />
-              </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      />
+          )}
+        />
+      )}
     </View>
   );
 }

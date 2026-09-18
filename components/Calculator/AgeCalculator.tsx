@@ -207,7 +207,7 @@ export default function AgeCalculator() {
   );
 }
 
-function InputGroup({ label, value, onChange, placeholder, wide }) {
+function InputGroup({ label, value, onChange, placeholder, wide = false }) {
   return (
     <View className={`${wide ? "w-[35%]" : "w-[30%]"}`}>
       <TextInput

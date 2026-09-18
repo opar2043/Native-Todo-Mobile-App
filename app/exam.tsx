@@ -1,7 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 
-export default function exam() {
+export default function Exam() {
     const [emails, setEmail] = useState("");
     const [passwords, setPassword] = useState("");
     const [err , setErr] = useState("");

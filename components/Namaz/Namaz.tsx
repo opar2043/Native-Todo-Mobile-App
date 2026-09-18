@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react'
 import * as Location from 'expo-location';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { getBanglaSurahName } from '../Quran/quran.constants';
 
 export default function Namaz() {
-  const [prayer, setPrayer] = useState(null);
+  const [prayer, setPrayer] = useState<Record<string, string> | null>(null);
   const [suras, setSuras] = useState([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState('prayer'); // 'prayer', 'suras', 'tasbih'
@@ -141,7 +142,7 @@ export default function Namaz() {
         )}
 
         {/* Prayer List */}
-        <Text className="text-[20px] font-bold text-primaryText mb-4">Today's Schedule</Text>
+        <Text className="text-[20px] font-bold text-primaryText mb-4">{"Today's Schedule"}</Text>
         
         {prayer && Object.entries(prayer).slice(0, 6).map(([name, time]) => {
           const isDone = name === 'Fajr' || name === 'Dhuhr' || name === 'Asr'; // Mocking done state
@@ -176,13 +177,13 @@ export default function Namaz() {
                   onPress={() => router.push(`/surah/${sura.number}`)}
                   className="bg-card p-4 rounded-[20px] mb-3 flex-row justify-between items-center shadow-sm border border-gray-100"
                 >
-                  <View className="flex-row items-center">
+                  <View className="flex-row items-center flex-1 mr-3">
                     <View className="w-10 h-10 rounded-full bg-background items-center justify-center mr-4">
                       <Text className="font-bold text-primaryText text-[12px]">{sura.number}</Text>
                     </View>
-                    <View>
-                      <Text className="font-bold text-[16px] text-primaryText">{sura.englishName}</Text>
-                      <Text className="text-secondaryText text-[12px]">{sura.englishNameTranslation} • {sura.numberOfAyahs} Ayahs</Text>
+                    <View className="flex-1">
+                      <Text className="font-bold text-[16px] text-primaryText">{getBanglaSurahName(sura.number)}</Text>
+                      <Text className="text-secondaryText text-[12px]">{sura.englishName} • {sura.numberOfAyahs} Ayahs</Text>
                     </View>
                   </View>
                   <Text className="font-bold text-[18px] text-accent">{sura.name}</Text>

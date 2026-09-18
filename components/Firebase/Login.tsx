@@ -31,7 +31,7 @@ const Login = () => {
   
   const handleGoogle = async () => {
     try {
-      await googleSignIn();
+      await handleGoogleLogin();
       router.replace("/(tabs)");
     } catch (error) {
       Alert.alert("Sign In Failed", error.message);
@@ -116,7 +116,7 @@ const Login = () => {
       {/* Register Link */}
       <TouchableOpacity onPress={() => router.push("/register")} className="mt-8">
         <Text className="text-center text-secondaryText font-medium text-[14px]">
-          Don't have an account? <Text className="text-accent font-bold">Sign Up</Text>
+          {"Don't have an account? "}<Text className="text-accent font-bold">Sign Up</Text>
         </Text>
       </TouchableOpacity>
 

@@ -1,10 +1,12 @@
-import { Tabs } from 'expo-router';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { Tabs, useRouter } from 'expo-router';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, usePathname } from 'expo-router';
+import { useTheme, ThemeColors } from '../../components/shared/theme';
 
 function CustomTabBar({ state, descriptors, navigation }) {
   const router = useRouter();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   
   return (
     <View style={styles.tabBar}>
@@ -39,7 +41,7 @@ function CustomTabBar({ state, descriptors, navigation }) {
         };
 
         // Determine icon based on route name
-        let iconName = 'home-outline';
+        let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';
         if (route.name === 'index') iconName = isFocused ? 'home' : 'home-outline';
         else if (route.name === 'calendar') iconName = isFocused ? 'calendar' : 'calendar-outline';
         else if (route.name === 'stats') iconName = isFocused ? 'bar-chart' : 'bar-chart-outline';
@@ -72,7 +74,7 @@ function CustomTabBar({ state, descriptors, navigation }) {
             onLongPress={onLongPress}
             style={styles.tabItem}
           >
-            <Ionicons name={iconName} size={24} color={isFocused ? '#FF6B35' : '#6B6B6B'} />
+            <Ionicons name={iconName} size={24} color={isFocused ? colors.accent : colors.secondaryText} />
             {isFocused && <View style={styles.activeDot} />}
           </TouchableOpacity>
         );
@@ -123,56 +125,57 @@ export default function TabLayout() {
   );
 }
 
-const styles = StyleSheet.create({
-  tabBar: {
-    flexDirection: 'row',
-    height: 80,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    elevation: 10,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    paddingBottom: 20, // For safe area
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-  },
-  activeDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#FF6B35',
-    marginTop: 4,
-  },
-  fabContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fab: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#FF6B35',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: -30,
-    shadowColor: '#FF6B35',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-    elevation: 8,
-  }
-});
+const createStyles = (colors: ThemeColors) =>
+  StyleSheet.create({
+    tabBar: {
+      flexDirection: 'row',
+      height: 80,
+      backgroundColor: colors.card,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: -4 },
+      shadowOpacity: 0.06,
+      shadowRadius: 16,
+      elevation: 10,
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      right: 0,
+      alignItems: 'center',
+      justifyContent: 'space-around',
+      paddingBottom: 20, // For safe area
+    },
+    tabItem: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: '100%',
+    },
+    activeDot: {
+      width: 4,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.accent,
+      marginTop: 4,
+    },
+    fabContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    fab: {
+      width: 56,
+      height: 56,
+      borderRadius: 28,
+      backgroundColor: colors.accent,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: -30,
+      shadowColor: colors.accent,
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.3,
+      shadowRadius: 12,
+      elevation: 8,
+    }
+  });

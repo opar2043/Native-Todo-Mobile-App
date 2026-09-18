@@ -22,7 +22,6 @@
 - [ ] Qibla direction (if possible via compass API).
 
 ### 4. 🚀 Real-Life Problem Solvers (New Ideas)
-- [ ] **Expenses Tracker**: Manage daily budget and spending.
 - [ ] **Water Reminder**: Track daily water intake.
 - [ ] **Quick Notes**: A simple notepad for fast ideas.
 - [ ] **Unit Converter**: Length, Weight, and Currency.

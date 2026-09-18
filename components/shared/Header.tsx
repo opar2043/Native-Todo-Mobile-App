@@ -27,7 +27,7 @@ export default function Header() {
   };
 
   const handlebackHome = () => {
-    router.replace("/add-todo");
+    router.replace("/");
   };
 
   return (

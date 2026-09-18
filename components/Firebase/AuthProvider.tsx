@@ -2,7 +2,18 @@ import React, { createContext, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile } from "firebase/auth";
 import auth from "./firebase.config";
 
-export const AuthContext = createContext();
+interface AuthContextValue {
+  user: any;
+  loading: boolean;
+  googleSignIn: () => Promise<any>;
+  setUser: (user: any) => void;
+  logOut: () => Promise<void>;
+  handleLogin: (email: string, password: string) => Promise<any>;
+  handleRegister: (name: string, email: string, password: string) => Promise<any>;
+  updateUserProfile: (data: { displayName?: string; photoURL?: string }) => Promise<any>;
+}
+
+export const AuthContext = createContext<AuthContextValue | null>(null);
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
@@ -42,6 +53,18 @@ const AuthProvider = ({ children }) => {
     }
   }
 
+  const updateUserProfile = async (data) => {
+    try {
+      if (auth.currentUser) {
+        await updateProfile(auth.currentUser, data);
+        setUser({ ...auth.currentUser });
+        return auth.currentUser;
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // Log Out
   const logOut = async () => {
     setLoading(true);
@@ -71,7 +94,8 @@ const AuthProvider = ({ children }) => {
     setUser,
     logOut,
     handleLogin , 
-    handleRegister
+    handleRegister,
+    updateUserProfile
   }
 
   return (

@@ -8,6 +8,10 @@ const addTask = async(payload) => {
     const res = await api.post("/tasks" , payload)
     return res.data
 }
+const updateTask = async(id, payload) => {
+    const res = await api.patch(`/tasks/${id}` , payload)
+    return res.data
+}
 const deleteTask = async(id) => {
     const res = await api.delete(`/tasks/${id}`)
     return res.data
@@ -17,5 +21,6 @@ const deleteTask = async(id) => {
 export  const taskService  = {
     getTask,
     addTask,
+    updateTask,
     deleteTask
 }
