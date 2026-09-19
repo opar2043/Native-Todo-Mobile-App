@@ -70,13 +70,13 @@ export default function TodoScreen() {
         text: "Delete",
         style: "destructive",
         onPress: async () => {
+          setData((prev) => prev.filter((t) => t._id !== id));
           try {
-            const res = await taskService.deleteTask(id);
-            if (res.deletedCount === 0) throw new Error("Delete failed");
-            await fetchTasks();
+            await taskService.deleteTask(id);
           } catch (error) {
             console.log(error);
             Alert.alert("Error", "Failed to delete task.");
+            await fetchTasks();
           }
         },
       },

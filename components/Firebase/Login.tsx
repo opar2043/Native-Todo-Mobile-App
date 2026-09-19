@@ -53,7 +53,7 @@ const Login = () => {
         <View className="bg-card w-20 h-20 rounded-[20px] items-center justify-center shadow-lg mb-6 border border-gray-100">
             <Ionicons name="checkmark-done" size={40} color="#FF6B35" />
         </View>
-        <Text className="text-[32px] font-bold text-primaryText">Native Todo</Text>
+        <Text className="text-[32px] font-bold text-primaryText">Daily Tracker</Text>
         <Text className="text-secondaryText font-medium text-[15px] mt-1">Organize your life seamlessly</Text>
       </View>
 

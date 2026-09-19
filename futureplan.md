@@ -1,6 +1,6 @@
-# Native ToDo: Future Monetization & Feature Roadmap
+# Daily Tracker: Future Monetization & Feature Roadmap
 
-This document outlines high-value, "value for money," and user-friendly features that can be added to Native ToDo. These features are designed to increase user retention, provide genuine utility, and create opportunities for premium (Pro) monetization, all while maintaining the clean, easy-to-use "Native Todo Aesthetic."
+This document outlines high-value, "value for money," and user-friendly features that can be added to Daily Tracker. These features are designed to increase user retention, provide genuine utility, and create opportunities for premium (Pro) monetization, all while maintaining the clean, easy-to-use "Daily Tracker Aesthetic."
 
 ---
 
@@ -65,7 +65,7 @@ These features utilize modern technology to do the thinking for the user.
 To make this app "Value for Money", offer a highly generous free tier and a compelling "Pro" tier:
 
 * **Free Tier:** Basic Todo List, Standard Calculator, Weather conditions, Text-only Quran, Standard Prayer Times.
-* **Native Pro ($2.99/mo or $29.99 Lifetime):** 
+* **Daily Tracker Pro ($2.99/mo or $29.99 Lifetime):** 
   - Unlocks Home Screen Widgets
   - Unlocks AI Task Suggestions
   - Unlocks Premium Themes (Dark Mode)
