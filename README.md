@@ -1,4 +1,4 @@
-# Daily Tracker
+# Daily Tracker - Mobile App
 
 A premium, multi-purpose **React Native (Expo)** life dashboard that combines task management, Islamic tools (Namaz & Quran), quick notes, unit conversion, and everyday utilities in one sleek, theme-aware app.
 
